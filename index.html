@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fibonacci Algorithms Lab — Interactive Demo</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0c10'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b8f53d' font-family='monospace' font-weight='bold'>φ</text></svg>">
+<title>KeyForge — Desktop Automation Toolkit</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0c10'/><text x='50' y='70' font-size='48' text-anchor='middle' fill='%23b8f53d' font-family='monospace' font-weight='bold'>⌨</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0c10;--panel:#12151c;--line:rgba(255,255,255,.09);--txt:#e8eaed;--mut:#9aa0a6;--acc:#b8f53d;--acc2:#7dd3fc}
@@ -14,21 +14,26 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
 h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
 h1 span{color:var(--acc)}
 .sub{color:var(--mut);font-size:17px;max-width:640px;line-height:1.6;margin-bottom:36px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.feat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;transition:transform .25s,border-color .25s}
+.feat:hover{transform:translateY(-4px);border-color:rgba(184,245,61,.4)}
+.feat h4{color:var(--acc2);font-size:14px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.feat p{color:var(--mut);font-size:14px;line-height:1.6}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px}
-.card h3{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--acc2);margin-bottom:14px}
-.row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-input{background:#0a0c10;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:12px 14px;font-size:16px;width:140px}
-input:focus{outline:none;border-color:var(--acc)}
-button{background:var(--acc);color:#0a0c10;border:none;border-radius:10px;padding:12px 22px;font-weight:700;font-size:15px;cursor:pointer}
-button:hover{transform:scale(1.04)}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
-th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--mut);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.08em}
-td.mono{font-family:ui-monospace,monospace}
-.fast{color:var(--acc);font-weight:700}.slow{color:#f87171;font-weight:700}
-.out{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:14px;font-family:ui-monospace,monospace;font-size:14px;word-break:break-all;line-height:1.7;margin-top:12px}
-.out b{color:var(--acc)}
-canvas{width:100%;height:260px;background:#0a0c10;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+.card h3{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--acc);margin-bottom:14px}
+.seq{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:16px;font-family:ui-monospace,monospace;font-size:14px;line-height:2}
+.seq .k{display:inline-block;background:rgba(184,245,61,.12);border:1px solid rgba(184,245,61,.35);color:var(--acc);border-radius:6px;padding:2px 10px;margin:2px}
+.seq .w{color:var(--mut)}
+.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+button{background:var(--acc);color:#0a0c10;border:none;border-radius:10px;padding:11px 20px;font-weight:700;font-size:14px;cursor:pointer}
+button.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+#simlog{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:14px;font-family:ui-monospace,monospace;font-size:13px;min-height:90px;margin-top:12px;line-height:1.8;color:var(--mut)}
+#simlog b{color:var(--acc)}
+pre{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:16px;font-size:13px;overflow-x:auto;line-height:1.7;color:var(--mut)}
+pre b{color:var(--acc)}
+.note{margin-top:20px;border:1px solid rgba(248,113,113,.35);border-radius:12px;padding:16px 18px;color:var(--mut);font-size:13px;line-height:1.7}
+.note b{color:#f87171}
 .links{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
 .links a{color:var(--txt);text-decoration:none;border:1px solid var(--line);padding:11px 20px;border-radius:10px;font-size:14px}
 .links a:hover{border-color:var(--acc)}
@@ -39,47 +44,51 @@ footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
 </head>
 <body>
 <div class="wrap">
-<div class="badge reveal">Fibonacci-Series · Algorithms Lab</div>
-<h1 class="reveal">Five ways to <span>Fibonacci.</span></h1>
-<p class="sub reveal">Naive recursion vs memoization vs iteration vs matrix exponentiation vs Binet's formula — race them live, then explore the golden ratio. Full benchmarked Python lab in the repo.</p>
+<div class="badge reveal">Auto-Key-Spam · KeyForge Automation</div>
+<h1 class="reveal">Desktop automation, <span>done right.</span></h1>
+<p class="sub reveal">KeyForge turns raw key-pressing into a real toolkit: JSON sequences, randomized human-like intervals, per-window targeting, a global kill-switch, and dry-run simulation. Try the sequence simulator below.</p>
 
-<div class="card reveal"><h3>Live race — fib(n)</h3>
-<div class="row"><input id="fib-n" type="number" value="30" min="1" max="40"><button onclick="race()">Race algorithms</button></div>
-<table><thead><tr><th>Algorithm</th><th>Complexity</th><th>Time</th><th>Result</th></tr></thead><tbody id="race-body">
-<tr><td colspan="4" style="color:var(--mut)">Press race…</td></tr></tbody></table></div>
+<div class="grid">
+<div class="feat reveal"><h4>JSON sequences</h4><p>Define key sequences as data — version-controlled, shareable, editable.</p></div>
+<div class="feat reveal"><h4>Human-like timing</h4><p>Randomized intervals between presses, no robotic patterns.</p></div>
+<div class="feat reveal"><h4>Kill-switch</h4><p>Esc aborts instantly, F9 pauses. Automation never runs away from you.</p></div>
+<div class="feat reveal"><h4>Window targeting</h4><p>Send keys only to the intended application window.</p></div>
+<div class="feat reveal"><h4>Dry-run mode</h4><p>Simulate the full sequence with zero side effects before going live.</p></div>
+<div class="feat reveal"><h4>Action logging</h4><p>Every press timestamped and logged for audit and debugging.</p></div>
+</div>
 
-<div class="card reveal"><h3>Golden ratio convergence</h3>
-<p style="color:var(--mut);font-size:14px;margin-bottom:6px">fib(n+1) / fib(n) → φ = 1.6180339887…</p>
-<canvas id="phi" width="900" height="260"></canvas>
-<div class="out" id="phi-out">—</div></div>
+<div class="card reveal"><h3>Sequence simulator (dry-run)</h3>
+<div class="seq"><span class="k">ctrl</span><span class="k">s</span> <span class="w">→ wait 0.4s →</span> <span class="k">alt</span><span class="k">tab</span> <span class="w">→ wait 1.2s →</span> <span class="k">F5</span></div>
+<div class="row"><button onclick="simulate()">Run dry-run</button><button class="ghost" onclick="document.getElementById('simlog').innerHTML='Log cleared.'">Clear</button></div>
+<div id="simlog">Press "Run dry-run" to simulate…</div></div>
+
+<div class="card reveal"><h3>sequences/example.json</h3>
+<pre>{
+  "name": "save-and-refresh",
+  "steps": [
+    {"keys": ["ctrl", "s"], "wait_after": 0.4},
+    {"keys": ["alt", "tab"], "wait_after": 1.2},
+    {"keys": ["F5"], "wait_after": 0.0}
+  ],
+  "jitter": 0.15,
+  "kill_key": "esc",
+  "pause_key": "f9"
+}</pre></div>
+
+<div class="note reveal"><b>Responsible use:</b> KeyForge is built for legitimate automation — accessibility assistance, UI testing, and productivity workflows. Do not use it to spam, harass, or violate any platform's terms of service.</div>
 
 <div class="links reveal">
-<a href="https://github.com/HVRGAMING2705/Fibonacci-Series">View source on GitHub</a>
-<a href="https://github.com/HVRGAMING2705/Fibonacci-Series/blob/main/fibonacci.py">fibonacci.py</a>
-<a href="https://github.com/HVRGAMING2705/Fibonacci-Series/blob/main/benchmark.py">benchmark.py</a>
+<a href="https://github.com/HVRGAMING2705/Auto-Key-Spam">View source on GitHub</a>
+<a href="https://github.com/HVRGAMING2705/Auto-Key-Spam/blob/main/keyforge.py">keyforge.py</a>
+<a href="https://github.com/HVRGAMING2705/Auto-Key-Spam/blob/main/cli.py">cli.py</a>
 </div>
-<footer>Built by Vikranth Reddy · Fibonacci Algorithms Lab</footer>
+<footer>Built by Vikranth Reddy · KeyForge Automation</footer>
 </div>
 <script>
-function fibIter(n){let a=0n,b=1n;for(let i=0n;i<n;i++){[a,b]=[b,a+b]}return a}
-function fibMatrix(n){function mul([[a,b],[c,d]],[[e,f],[g,h]]){return [[a*e+b*g,a*f+b*h],[c*e+d*g,c*f+d*h]]}
-function pw(m,p){let r=[[1n,0n],[0n,1n]];while(p>0n){if(p&1n)r=mul(r,m);m=mul(m,m);p>>=1n}return r}
-return n===0n?0n:pw([[1n,1n],[1n,0n]],n-1n)[0][0]}
-function fibNaive(n){return n<2?n:fibNaive(n-1)+fibNaive(n-2)}
-const memo={};function fibMemo(n){if(n<2)return BigInt(n);if(memo[n]!==undefined)return memo[n];return memo[n]=fibMemo(n-1)+fibMemo(n-2)}
-function race(){const n=parseInt(document.getElementById('fib-n').value)||30;const nb=BigInt(n);
-const rows=[];let t0=performance.now();const r1=fibNaive(n);rows.push(['Naive recursion','O(2ⁿ)',performance.now()-t0,r1]);
-t0=performance.now();const r2=fibMemo(nb);rows.push(['Memoized','O(n)',performance.now()-t0,r2]);
-t0=performance.now();const r3=fibIter(nb);rows.push(['Iterative','O(n)',performance.now()-t0,r3]);
-t0=performance.now();const r4=fibMatrix(nb);rows.push(['Matrix exponentiation','O(log n)',performance.now()-t0,r4]);
-document.getElementById('race-body').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="mono">${r[1]}</td><td class="mono ${r[2]>50?'slow':'fast'}">${r[2].toFixed(3)} ms</td><td class="mono">${r[3].toString().slice(0,24)}${r[3].toString().length>24?'…':''}</td></tr>`).join('');}
-function drawPhi(){const c=document.getElementById('phi'),x=c.getContext('2d');const W=c.width,H=c.height;const PHI=1.618033988749895;
-let a=0,b=1;const pts=[];for(let i=2;i<=30;i++){[a,b]=[b,a+b];pts.push(b/a)}
-x.clearRect(0,0,W,H);x.strokeStyle='rgba(184,245,61,.25)';x.setLineDash([6,6]);const yPhi=H-((PHI-1.5)/0.2)*H;x.beginPath();x.moveTo(0,yPhi);x.lineTo(W,yPhi);x.stroke();x.setLineDash([]);
-x.strokeStyle='#b8f53d';x.lineWidth=2.5;x.beginPath();pts.forEach((p,i)=>{const px=(i/(pts.length-1))*W,py=H-((p-1.5)/0.2)*H;i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke();
-x.fillStyle='#9aa0a6';x.font='12px sans-serif';x.fillText('φ = 1.61803…',10,yPhi-8);
-document.getElementById('phi-out').innerHTML='fib(31)/fib(30) = <b>'+pts[pts.length-1].toFixed(12)+'</b> → converging on φ';}
-drawPhi();
+function simulate(){const log=document.getElementById('simlog');log.innerHTML='';
+const steps=[['[0.00s]','PRESS <b>ctrl+s</b> → window: active'],['[0.42s]','WAIT 0.4s (+jitter 0.02s)'],['[0.44s]','PRESS <b>alt+tab</b> → window: active'],['[1.61s]','WAIT 1.2s (+jitter 0.01s)'],['[1.62s]','PRESS <b>F5</b> → window: active'],['[1.62s]','<b>DRY-RUN COMPLETE</b> — 0 real key events sent']];
+let i=0;const t=setInterval(()=>{if(i>=steps.length){clearInterval(t);return}
+log.innerHTML+=`<div>${steps[i][0]} ${steps[i][1]}</div>`;i++},450)}
 const io=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('on')),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
