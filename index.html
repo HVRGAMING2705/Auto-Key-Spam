@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fibonacci Algorithms Lab — Interactive Demo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0c10'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b8f53d' font-family='monospace' font-weight='bold'>φ</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0c10;--panel:#12151c;--line:rgba(255,255,255,.09);--txt:#e8eaed;--mut:#9aa0a6;--acc:#b8f53d;--acc2:#7dd3fc}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:960px;margin:0 auto;padding:48px 20px 80px}
+.badge{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(184,245,61,.35);padding:6px 14px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+h1 span{color:var(--acc)}
+.sub{color:var(--mut);font-size:17px;max-width:640px;line-height:1.6;margin-bottom:36px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px}
+.card h3{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--acc2);margin-bottom:14px}
+.row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+input{background:#0a0c10;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:12px 14px;font-size:16px;width:140px}
+input:focus{outline:none;border-color:var(--acc)}
+button{background:var(--acc);color:#0a0c10;border:none;border-radius:10px;padding:12px 22px;font-weight:700;font-size:15px;cursor:pointer}
+button:hover{transform:scale(1.04)}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+td.mono{font-family:ui-monospace,monospace}
+.fast{color:var(--acc);font-weight:700}.slow{color:#f87171;font-weight:700}
+.out{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:14px;font-family:ui-monospace,monospace;font-size:14px;word-break:break-all;line-height:1.7;margin-top:12px}
+.out b{color:var(--acc)}
+canvas{width:100%;height:260px;background:#0a0c10;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+.links{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.links a{color:var(--txt);text-decoration:none;border:1px solid var(--line);padding:11px 20px;border-radius:10px;font-size:14px}
+.links a:hover{border-color:var(--acc)}
+footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.reveal.on{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="badge reveal">Fibonacci-Series · Algorithms Lab</div>
+<h1 class="reveal">Five ways to <span>Fibonacci.</span></h1>
+<p class="sub reveal">Naive recursion vs memoization vs iteration vs matrix exponentiation vs Binet's formula — race them live, then explore the golden ratio. Full benchmarked Python lab in the repo.</p>
+
+<div class="card reveal"><h3>Live race — fib(n)</h3>
+<div class="row"><input id="fib-n" type="number" value="30" min="1" max="40"><button onclick="race()">Race algorithms</button></div>
+<table><thead><tr><th>Algorithm</th><th>Complexity</th><th>Time</th><th>Result</th></tr></thead><tbody id="race-body">
+<tr><td colspan="4" style="color:var(--mut)">Press race…</td></tr></tbody></table></div>
+
+<div class="card reveal"><h3>Golden ratio convergence</h3>
+<p style="color:var(--mut);font-size:14px;margin-bottom:6px">fib(n+1) / fib(n) → φ = 1.6180339887…</p>
+<canvas id="phi" width="900" height="260"></canvas>
+<div class="out" id="phi-out">—</div></div>
+
+<div class="links reveal">
+<a href="https://github.com/HVRGAMING2705/Fibonacci-Series">View source on GitHub</a>
+<a href="https://github.com/HVRGAMING2705/Fibonacci-Series/blob/main/fibonacci.py">fibonacci.py</a>
+<a href="https://github.com/HVRGAMING2705/Fibonacci-Series/blob/main/benchmark.py">benchmark.py</a>
+</div>
+<footer>Built by Vikranth Reddy · Fibonacci Algorithms Lab</footer>
+</div>
+<script>
+function fibIter(n){let a=0n,b=1n;for(let i=0n;i<n;i++){[a,b]=[b,a+b]}return a}
+function fibMatrix(n){function mul([[a,b],[c,d]],[[e,f],[g,h]]){return [[a*e+b*g,a*f+b*h],[c*e+d*g,c*f+d*h]]}
+function pw(m,p){let r=[[1n,0n],[0n,1n]];while(p>0n){if(p&1n)r=mul(r,m);m=mul(m,m);p>>=1n}return r}
+return n===0n?0n:pw([[1n,1n],[1n,0n]],n-1n)[0][0]}
+function fibNaive(n){return n<2?n:fibNaive(n-1)+fibNaive(n-2)}
+const memo={};function fibMemo(n){if(n<2)return BigInt(n);if(memo[n]!==undefined)return memo[n];return memo[n]=fibMemo(n-1)+fibMemo(n-2)}
+function race(){const n=parseInt(document.getElementById('fib-n').value)||30;const nb=BigInt(n);
+const rows=[];let t0=performance.now();const r1=fibNaive(n);rows.push(['Naive recursion','O(2ⁿ)',performance.now()-t0,r1]);
+t0=performance.now();const r2=fibMemo(nb);rows.push(['Memoized','O(n)',performance.now()-t0,r2]);
+t0=performance.now();const r3=fibIter(nb);rows.push(['Iterative','O(n)',performance.now()-t0,r3]);
+t0=performance.now();const r4=fibMatrix(nb);rows.push(['Matrix exponentiation','O(log n)',performance.now()-t0,r4]);
+document.getElementById('race-body').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="mono">${r[1]}</td><td class="mono ${r[2]>50?'slow':'fast'}">${r[2].toFixed(3)} ms</td><td class="mono">${r[3].toString().slice(0,24)}${r[3].toString().length>24?'…':''}</td></tr>`).join('');}
+function drawPhi(){const c=document.getElementById('phi'),x=c.getContext('2d');const W=c.width,H=c.height;const PHI=1.618033988749895;
+let a=0,b=1;const pts=[];for(let i=2;i<=30;i++){[a,b]=[b,a+b];pts.push(b/a)}
+x.clearRect(0,0,W,H);x.strokeStyle='rgba(184,245,61,.25)';x.setLineDash([6,6]);const yPhi=H-((PHI-1.5)/0.2)*H;x.beginPath();x.moveTo(0,yPhi);x.lineTo(W,yPhi);x.stroke();x.setLineDash([]);
+x.strokeStyle='#b8f53d';x.lineWidth=2.5;x.beginPath();pts.forEach((p,i)=>{const px=(i/(pts.length-1))*W,py=H-((p-1.5)/0.2)*H;i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke();
+x.fillStyle='#9aa0a6';x.font='12px sans-serif';x.fillText('φ = 1.61803…',10,yPhi-8);
+document.getElementById('phi-out').innerHTML='fib(31)/fib(30) = <b>'+pts[pts.length-1].toFixed(12)+'</b> → converging on φ';}
+drawPhi();
+const io=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('on')),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
