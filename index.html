@@ -68,6 +68,8 @@ footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
 .reveal.on{opacity:1;transform:none}
 </style>
+<meta property="og:image" content="https://auto-key-spam.vercel.app/og.png">
+<meta name="twitter:image" content="https://auto-key-spam.vercel.app/og.png">
 </head>
 <body>
 <div class="wrap">
@@ -109,7 +111,8 @@ footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
 <a href="https://github.com/HVRGAMING2705/Auto-Key-Spam/blob/main/keyforge.py">keyforge.py</a>
 <a href="https://github.com/HVRGAMING2705/Auto-Key-Spam/blob/main/cli.py">cli.py</a>
 </div>
-<footer>Built by Vikranth Reddy · KeyForge Automation</footer>
+<footer>Built by Vikranth Reddy · KeyForge Automation<span class="fleet-legal" style="display:block;text-align:center;padding:10px 0;font-size:13px"><a href="/legal.html">Privacy · Terms</a></span>
+</footer>
 </div>
 <script>
 function simulate(){const log=document.getElementById('simlog');log.innerHTML='';
@@ -119,5 +122,6 @@ log.innerHTML+=`<div>${steps[i][0]} ${steps[i][1]}</div>`;i++},450)}
 const io=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('on')),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
