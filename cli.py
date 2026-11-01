@@ -18,13 +18,20 @@ def main(argv=None):
     ap.add_argument("--log", default="keyforge.log", help="action log file")
     ap.add_argument("--toggle-key", default="f9", help="global pause/resume hotkey")
     ap.add_argument("--stop-key", default="esc", help="global kill-switch hotkey")
+    ap.add_argument("--allow-missing-window", action="store_true",
+                    help="continue even if the target window is not found "
+                         "(default: abort — keys must never go to the wrong window)")
     args = ap.parse_args(argv)
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(message)s",
-        handlers=[logging.FileHandler(args.log), logging.StreamHandler()],
-    )
+    try:
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s %(levelname)s %(message)s",
+            handlers=[logging.FileHandler(args.log), logging.StreamHandler()],
+        )
+    except OSError as exc:
+        print(f"cannot open log file: {exc}", file=sys.stderr)
+        return 2
 
     try:
         cfg = load_sequence(args.sequence)
@@ -43,7 +50,12 @@ def main(argv=None):
             return 3
         ks = KillSwitch(args.toggle_key, args.stop_key)
 
-    run_sequence(cfg, backend, ks, dry_run=args.dry_run)
+    try:
+        run_sequence(cfg, backend, ks, dry_run=args.dry_run,
+                     require_window=not args.allow_missing_window)
+    except RuntimeError as exc:
+        print(f"aborted: {exc}", file=sys.stderr)
+        return 4
     return 0
 
 

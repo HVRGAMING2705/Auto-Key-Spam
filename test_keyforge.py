@@ -87,6 +87,93 @@ def main():
     __import__("keyforge")._do_step = orig_do
     check("kill-switch halts execution", n2 == 0 and not calls)
 
+    # --- v2.0 validation holes (previously silently accepted) ---
+    def rejects(label, cfg):
+        p = write_cfg(cfg)
+        try:
+            load_sequence(p)
+            check(label, False)
+        except ValueError:
+            check(label, True)
+        finally:
+            os.unlink(p)
+
+    rejects("rejects bogus type", {"steps": [{"type": "bogus"}]})
+    rejects("rejects text step without text", {"steps": [{"type": "text"}]})
+    rejects("rejects keys as string", {"steps": [{"keys": "abc"}]})
+    rejects("rejects empty keys", {"steps": [{"keys": []}]})
+    rejects("rejects empty hotkey", {"steps": [{"hotkey": []}]})
+    rejects("rejects repeats 0", {"steps": [{"keys": ["a"], "repeats": 0}]})
+    rejects("rejects negative repeats", {"steps": [{"keys": ["a"], "repeats": -3}]})
+    rejects("rejects repeats over cap", {"steps": [{"keys": ["a"], "repeats": 10001}]})
+    rejects("rejects two actions in one step",
+            {"steps": [{"keys": ["a"], "hotkey": ["ctrl", "s"]}]})
+    rejects("rejects string countdown", {"steps": [{"keys": ["a"]}], "countdown": "soon"})
+    rejects("rejects negative countdown", {"steps": [{"keys": ["a"]}], "countdown": -1})
+    rejects("rejects non-object config", [1, 2, 3])
+    rejects("rejects negative interval", {"steps": [{"keys": ["a"], "interval": -0.5}]})
+    try:
+        pick_interval([0.5])
+        check("pick_interval rejects bad range", False)
+    except ValueError:
+        check("pick_interval rejects bad range", True)
+
+    # bogus step must not silently count as an action
+    b2 = DryRunBackend()
+    try:
+        run_sequence({"name": "x", "steps": [{"type": "bogus"}]}, b2, dry_run=True)
+        check("bogus step raises in run", False)
+    except ValueError:
+        check("bogus step raises in run", True)
+
+    # window targeting: missing window aborts by default, runs with override
+    class MissBackend(DryRunBackend):
+        def activate_window(self, title):
+            return False
+    try:
+        run_sequence({"name": "x", "window": "No Such App", "steps": [{"keys": ["a"]}]},
+                     MissBackend(), dry_run=False)
+        check("missing window aborts by default", False)
+    except RuntimeError:
+        check("missing window aborts by default", True)
+    n3 = run_sequence({"name": "x", "window": "No Such App", "steps": [{"keys": ["a"]}]},
+                      MissBackend(), dry_run=False, require_window=False)
+    check("missing window runs with override", n3 == 1)
+
+    # pause/resume state machine: paused run makes no progress until resumed
+    import threading
+    ks2 = KillSwitch.__new__(KillSwitch)
+    ks2.paused, ks2.stopped = True, False
+    b3 = DryRunBackend()
+    done = []
+    t = threading.Thread(target=lambda: done.append(
+        run_sequence({"name": "x", "steps": [{"keys": ["a"], "repeats": 2}]},
+                     b3, ks2, dry_run=True)))
+    t.start()
+    import time as _time
+    _time.sleep(0.35)
+    check("paused run makes no progress", len(b3.actions) == 0 and t.is_alive())
+    ks2.toggle()  # resume
+    t.join(timeout=5)
+    check("resumed run completes", done == [2] and not t.is_alive())
+
+    # timing estimate math matches the schema (fixed + range, repeats)
+    est = __import__("keyforge").estimate_duration(
+        {"name": "x", "steps": [
+            {"keys": ["a"], "interval": 0.5, "repeats": 2},
+            {"keys": ["b"], "interval": [0.1, 0.3]},
+        ]})
+    check("estimate actions", est["actions"] == 3)
+    check("estimate min/expected/max",
+          est["min"] == 1.1 and est["expected"] == 1.2 and est["max"] == 1.3)
+
+    # the shipped example loads, validates, and dry-runs cleanly
+    ex = load_sequence(os.path.join(os.path.dirname(__file__), "sequences", "example.json"))
+    check("shipped example.json loads", ex["name"] == "notepad typing demo")
+    b4 = DryRunBackend()
+    n4 = run_sequence(ex, b4, dry_run=True)
+    check("shipped example dry-runs", n4 == 6)  # 1 + 1 + 3 repeats + 1
+
     print(f"\n{PASS} passed, {FAIL} failed")
     raise SystemExit(1 if FAIL else 0)
 

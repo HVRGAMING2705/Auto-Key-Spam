@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KeyForge — Desktop Automation Toolkit</title>
-<meta name="description" content="KeyForge is a desktop automation toolkit demo: define key sequences as JSON, simulate human-like timing, target specific windows, and dry-run everything with zero side effects. Built by Vikranth Reddy.">
+<meta name="description" content="KeyForge is a desktop automation toolkit: build key sequences in your browser, validate and dry-run them with true timing, then download a real runnable JSON file for the Python desktop tool. The web page itself cannot press keys. Built by Vikranth Reddy.">
 <meta name="keywords" content="keyforge, keyboard automation, auto key press, macro toolkit, desktop automation, dry-run simulator">
 <meta name="author" content="Vikranth Reddy">
 <meta name="robots" content="index, follow">
@@ -12,35 +12,32 @@
 <meta name="theme-color" content="#0a0c10">
 <meta property="og:type" content="website">
 <meta property="og:title" content="KeyForge — Desktop Automation Toolkit">
-<meta property="og:description" content="KeyForge is a desktop automation toolkit demo: define key sequences as JSON, simulate human-like timing, target specific windows, and dry-run everything with zero side effects. Built by Vikranth Reddy.">
+<meta property="og:description" content="Build key sequences in your browser, dry-run them with true timing, and download a real runnable file for the Python desktop tool.">
 <meta property="og:url" content="https://auto-key-spam.vercel.app/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KeyForge — Desktop Automation Toolkit">
-<meta name="twitter:description" content="KeyForge is a desktop automation toolkit demo: define key sequences as JSON, simulate human-like timing, target specific windows, and dry-run everything with zero side effects. Built by Vikranth Reddy.">
+<meta name="twitter:description" content="Build key sequences in your browser, dry-run them with true timing, and download a real runnable file for the Python desktop tool.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "KeyForge \u2014 Desktop Automation Toolkit",
+  "name": "KeyForge — Desktop Automation Toolkit",
   "url": "https://auto-key-spam.vercel.app/",
-  "author": {
-    "@type": "Person",
-    "name": "Vikranth Reddy"
-  },
+  "author": { "@type": "Person", "name": "Vikranth Reddy" },
   "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Web"
+  "operatingSystem": "Windows, macOS, Linux"
 }
 </script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0c10'/><text x='50' y='70' font-size='48' text-anchor='middle' fill='%23b8f53d' font-family='monospace' font-weight='bold'>⌨</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0c10;--panel:#12151c;--line:rgba(255,255,255,.09);--txt:#e8eaed;--mut:#9aa0a6;--acc:#b8f53d;--acc2:#7dd3fc}
+:root{--bg:#0a0c10;--panel:#12151c;--line:rgba(255,255,255,.09);--txt:#e8eaed;--mut:#9aa0a6;--acc:#b8f53d;--acc2:#7dd3fc;--red:#f87171}
 body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
 .wrap{max-width:960px;margin:0 auto;padding:48px 20px 80px}
 .badge{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(184,245,61,.35);padding:6px 14px;border-radius:99px;margin-bottom:18px}
 h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
 h1 span{color:var(--acc)}
-.sub{color:var(--mut);font-size:17px;max-width:640px;line-height:1.6;margin-bottom:36px}
+.sub{color:var(--mut);font-size:17px;max-width:680px;line-height:1.6;margin-bottom:24px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}}
 .feat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;transition:transform .25s,border-color .25s}
@@ -49,21 +46,39 @@ h1 span{color:var(--acc)}
 .feat p{color:var(--mut);font-size:14px;line-height:1.6}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px}
 .card h3{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--acc);margin-bottom:14px}
-.seq{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:16px;font-family:ui-monospace,monospace;font-size:14px;line-height:2}
-.seq .k{display:inline-block;background:rgba(184,245,61,.12);border:1px solid rgba(184,245,61,.35);color:var(--acc);border-radius:6px;padding:2px 10px;margin:2px}
-.seq .w{color:var(--mut)}
+.card h3 small{display:block;text-transform:none;letter-spacing:0;color:var(--mut);font-size:13px;margin-top:6px;line-height:1.6}
 .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 button{background:var(--acc);color:#0a0c10;border:none;border-radius:10px;padding:11px 20px;font-weight:700;font-size:14px;cursor:pointer;min-height:44px}
+button:disabled{opacity:.45;cursor:not-allowed}
 button.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
-#simlog{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:14px;font-family:ui-monospace,monospace;font-size:13px;min-height:90px;margin-top:12px;line-height:1.8;color:var(--mut)}
+button.danger{background:transparent;color:var(--red);border:1px solid rgba(248,113,113,.4)}
+input,select,textarea{background:#05070a;border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:9px 11px;font-size:14px;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:1px solid var(--acc)}
+label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);display:block;margin-bottom:5px}
+.field{margin-bottom:12px}
+.stepbox{background:#05070a;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.stepbox .srow{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.stepbox .srow>*{flex:1;min-width:130px}
+.stepbox .srow .narrow{flex:0 0 110px;min-width:110px}
+#builderErr{color:var(--red);font-size:13px;line-height:1.7;min-height:20px;margin-top:8px}
+#stats{color:var(--mut);font-size:13px;line-height:1.8}
+#stats b{color:var(--acc)}
+#simlog{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:14px;font-family:ui-monospace,monospace;font-size:13px;min-height:90px;margin-top:12px;line-height:1.8;color:var(--mut);max-height:320px;overflow-y:auto}
 #simlog b{color:var(--acc)}
+#simlog .err{color:var(--red)}
 pre{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:16px;font-size:13px;overflow-x:auto;line-height:1.7;color:var(--mut)}
 pre b{color:var(--acc)}
 .note{margin-top:20px;border:1px solid rgba(248,113,113,.35);border-radius:12px;padding:16px 18px;color:var(--mut);font-size:13px;line-height:1.7}
 .note b{color:#f87171}
+.honest{margin-top:0;margin-bottom:20px;border:1px solid rgba(125,211,252,.4);border-radius:12px;padding:16px 18px;color:var(--mut);font-size:14px;line-height:1.7}
+.honest b{color:var(--acc2)}
 .links{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
 .links a{color:var(--txt);text-decoration:none;border:1px solid var(--line);padding:11px 20px;border-radius:10px;font-size:14px}
 .links a:hover{border-color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:13px;color:var(--mut);line-height:1.6}
+th{color:var(--txt);text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+td b{color:var(--txt)}
 footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
 .reveal.on{opacity:1;transform:none}
@@ -75,34 +90,78 @@ footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
 <div class="wrap">
 <div class="badge reveal">Auto-Key-Spam · KeyForge Automation</div>
 <h1 class="reveal">Desktop automation, <span>done right.</span></h1>
-<p class="sub reveal">KeyForge turns raw key-pressing into a real toolkit: JSON sequences, randomized human-like intervals, per-window targeting, a global kill-switch, and dry-run simulation. Try the sequence simulator below.</p>
+<p class="sub reveal">KeyForge turns raw key-pressing into a real toolkit: JSON sequences, randomized human-like intervals, per-window targeting, a global kill-switch, and dry-run simulation. Build a sequence below, simulate it, and download a file the desktop tool really runs.</p>
+
+<div class="honest reveal"><b>Honest split — read this first:</b> this web page <b>cannot press keys</b>. No website can — browsers have no access to your keyboard output. Everything on this page is a <b>simulation</b> (0 real key events). Real keypresses happen only when you download the JSON below and run it with the Python tool on your own desktop: <code>python cli.py your-sequence.json</code>.</div>
 
 <div class="grid">
 <div class="feat reveal"><h4>JSON sequences</h4><p>Define key sequences as data — version-controlled, shareable, editable.</p></div>
 <div class="feat reveal"><h4>Human-like timing</h4><p>Randomized intervals between presses, no robotic patterns.</p></div>
 <div class="feat reveal"><h4>Kill-switch</h4><p>Esc aborts instantly, F9 pauses. Automation never runs away from you.</p></div>
-<div class="feat reveal"><h4>Window targeting</h4><p>Send keys only to the intended application window.</p></div>
+<div class="feat reveal"><h4>Window targeting</h4><p>Live runs abort if the target window is missing — keys never go to the wrong app by accident.</p></div>
 <div class="feat reveal"><h4>Dry-run mode</h4><p>Simulate the full sequence with zero side effects before going live.</p></div>
 <div class="feat reveal"><h4>Action logging</h4><p>Every press timestamped and logged for audit and debugging.</p></div>
 </div>
 
-<div class="card reveal"><h3>Sequence simulator (dry-run)</h3>
-<div class="seq"><span class="k">ctrl</span><span class="k">s</span> <span class="w">→ wait 0.4s →</span> <span class="k">alt</span><span class="k">tab</span> <span class="w">→ wait 1.2s →</span> <span class="k">F5</span></div>
-<div class="row"><button onclick="simulate()">Run dry-run</button><button class="ghost" onclick="document.getElementById('simlog').innerHTML='Log cleared.'">Clear</button></div>
-<div id="simlog">Press "Run dry-run" to simulate…</div></div>
+<div class="card reveal"><h3>Sequence builder <small>Builds a real, validated sequence — the same rules as the Python tool (one action per step, interval ≥ 0, repeats 1–10000). Your work auto-saves in this browser (localStorage) and never leaves your device.</small></h3>
+<div class="field"><label for="seqName">Sequence name</label><input id="seqName" value="my-sequence" style="width:100%"></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<div class="field" style="flex:1;min-width:200px"><label for="seqWindow">Target window title (optional)</label><input id="seqWindow" placeholder="e.g. Untitled - Notepad" style="width:100%"></div>
+<div class="field" style="flex:0 0 130px"><label for="seqCountdown">Countdown (s)</label><input id="seqCountdown" type="number" min="0" value="3" style="width:100%"></div>
+</div>
+<div id="steps"></div>
+<div class="row">
+<button class="ghost" onclick="addStep('keys')">+ Press keys</button>
+<button class="ghost" onclick="addStep('text')">+ Type text</button>
+<button class="ghost" onclick="addStep('hotkey')">+ Hotkey</button>
+<button class="ghost" onclick="loadExample()">Load shipped example</button>
+</div>
+<div id="builderErr"></div>
+<div id="stats"></div>
+<div class="row">
+<button onclick="saveSequence()">Save in this browser</button>
+<button class="ghost" onclick="exportJSON()">Download .json</button>
+<button class="ghost" onclick="document.getElementById('importFile').click()">Import .json</button>
+<input type="file" id="importFile" accept=".json,application/json" hidden onchange="importJSON(event)">
+</div>
+<div class="row" id="savedList" style="color:var(--mut);font-size:13px"></div>
+<pre id="jsonPreview" style="margin-top:14px"></pre>
+<p style="color:var(--mut);font-size:13px;line-height:1.7;margin-top:12px">To run it for real on your desktop:<br>
+<code>pip install -r requirements.txt</code> &nbsp;then&nbsp; <code>python cli.py your-sequence.json --dry-run</code> (safe check) &nbsp;then&nbsp; <code>python cli.py your-sequence.json</code> (live — Esc stops it, F9 pauses).</p>
+</div>
 
-<div class="card reveal"><h3>sequences/example.json</h3>
+<div class="card reveal"><h3>Dry-run timeline simulator <small>SIMULATION ONLY — 0 real key events. Intervals are sampled live with the same math as the Python tool (fixed value, or uniform random in [min, max]); timestamps below are the true simulated times. Playback speed only changes wall-clock waiting, never the timestamps. Pause / Stop work mid-run, like the real kill-switch.</small></h3>
+<div class="row" style="margin-top:0">
+<label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--txt)">Playback speed
+<select id="speed"><option value="1">1× real time</option><option value="4" selected>4× preview</option><option value="16">16× preview</option></select></label>
+</div>
+<div class="row"><button id="btnRun" onclick="runSim()">Run dry-run simulation</button><button class="ghost" id="btnPause" onclick="pauseSim()" disabled>Pause</button><button class="danger" id="btnStop" onclick="stopSim()" disabled>Stop</button><button class="ghost" onclick="document.getElementById('simlog').innerHTML='Log cleared.'">Clear</button></div>
+<div id="simlog">Build a sequence above, then press "Run dry-run simulation".</div></div>
+
+<div class="card reveal"><h3>sequences/example.json — the real shipped file</h3>
 <pre>{
-  "name": "save-and-refresh",
+  "countdown": 2,
+  "name": "notepad typing demo",
   "steps": [
-    {"keys": ["ctrl", "s"], "wait_after": 0.4},
-    {"keys": ["alt", "tab"], "wait_after": 1.2},
-    {"keys": ["F5"], "wait_after": 0.0}
+    {"type": "text", "text": "Hello from KeyForge. ", "interval": 0.5},
+    {"keys": ["enter"], "interval": 0.3},
+    {"keys": ["h", "e", "l", "l", "o"], "interval": [0.05, 0.15], "repeats": 3},
+    {"hotkey": ["ctrl", "s"], "interval": [1.0, 1.5]}
   ],
-  "jitter": 0.15,
-  "kill_key": "esc",
-  "pause_key": "f9"
-}</pre></div>
+  "window": "Untitled - Notepad"
+}</pre>
+<p style="color:var(--mut);font-size:13px;line-height:1.7;margin-top:12px">This is the exact file in the repo — copy it or download it from GitHub. Earlier versions of this page showed a different example using fields (<code>wait_after</code>, <code>jitter</code>) the tool never supported; that stale example has been removed.</p></div>
+
+<div class="card reveal"><h3>How KeyForge compares</h3>
+<table>
+<tr><th>Tool</th><th>What it has</th><th>Where KeyForge differs</th></tr>
+<tr><td><b>AutoHotkey</b> (free, Windows)</td><td>Full scripting language, hotkeys, compiles to .exe</td><td>KeyForge is simpler JSON + a browser builder; no scripting language to learn, but also no mouse control or conditionals yet.</td></tr>
+<tr><td><b>Pulover's Macro Creator</b> (free, Windows)</td><td>Visual macro builder, recording, exports AutoHotkey scripts</td><td>KeyForge's builder runs in any browser and exports runnable JSON; it does not record mouse/keyboard input.</td></tr>
+<tr><td><b>TinyTask</b> (free, Windows)</td><td>Tiny recorder: record once, replay; no install</td><td>KeyForge sequences are editable data with randomized timing and a kill-switch; TinyTask has no sequence editing or window-target abort.</td></tr>
+<tr><td><b>AutoIt</b> (free, Windows)</td><td>Scripting + GUI automation, pixel/window functions</td><td>KeyForge is cross-platform Python and JSON-first; AutoIt is Windows-only and script-first.</td></tr>
+<tr><td><b>Auto Keyboard by MurGee</b> (trial, then paid)</td><td>Single-key repetition, global hotkey, system tray</td><td>KeyForge is free, multi-step sequences with hotkeys and text; MurGee presses one key only.</td></tr>
+</table>
+<p style="color:var(--mut);font-size:13px;line-height:1.7;margin-top:12px">No backend, account, or payment is needed for KeyForge: the page stores sequences in your browser only, and the desktop tool runs locally. Nothing here is a live user count or usage statistic — there are none.</p></div>
 
 <div class="note reveal"><b>Responsible use:</b> KeyForge is built for legitimate automation — accessibility assistance, UI testing, and productivity workflows. Do not use it to spam, harass, or violate any platform's terms of service.</div>
 
@@ -110,15 +169,219 @@ footer{margin-top:48px;color:var(--mut);font-size:13px;text-align:center}
 <a href="https://github.com/HVRGAMING2705/Auto-Key-Spam">View source on GitHub</a>
 <a href="https://github.com/HVRGAMING2705/Auto-Key-Spam/blob/main/keyforge.py">keyforge.py</a>
 <a href="https://github.com/HVRGAMING2705/Auto-Key-Spam/blob/main/cli.py">cli.py</a>
+<a href="https://raw.githubusercontent.com/HVRGAMING2705/Auto-Key-Spam/main/keyforge.py">Download keyforge.py</a>
+<a href="https://raw.githubusercontent.com/HVRGAMING2705/Auto-Key-Spam/main/cli.py">Download cli.py</a>
+<a href="https://raw.githubusercontent.com/HVRGAMING2705/Auto-Key-Spam/main/sequences/example.json">Download example.json</a>
 </div>
-<footer>Built by Vikranth Reddy · KeyForge Automation<span class="fleet-legal" style="display:block;text-align:center;padding:10px 0;font-size:13px"><a href="/legal.html">Privacy · Terms</a></span>
+<footer>v2.0 — production release · Built by Vikranth Reddy · KeyForge Automation<span style="display:block;text-align:center;padding:10px 0;font-size:13px"><a href="/legal.html" style="color:inherit">Privacy · Terms</a></span>
+<p>Built by <a href="https://vikranthreddy.vercel.app" style="color:inherit">Vikranth Reddy</a></p>
 </footer>
 </div>
 <script>
-function simulate(){const log=document.getElementById('simlog');log.innerHTML='';
-const steps=[['[0.00s]','PRESS <b>ctrl+s</b> → window: active'],['[0.42s]','WAIT 0.4s (+jitter 0.02s)'],['[0.44s]','PRESS <b>alt+tab</b> → window: active'],['[1.61s]','WAIT 1.2s (+jitter 0.01s)'],['[1.62s]','PRESS <b>F5</b> → window: active'],['[1.62s]','<b>DRY-RUN COMPLETE</b> — 0 real key events sent']];
-let i=0;const t=setInterval(()=>{if(i>=steps.length){clearInterval(t);return}
-log.innerHTML+=`<div>${steps[i][0]} ${steps[i][1]}</div>`;i++},450)}
+const LS_KEY='keyforge-sequences-v2';
+let steps=[{kind:'keys',value:'ctrl, s',ivMode:'fixed',iv:0.4,repeats:1},
+           {kind:'keys',value:'alt, tab',ivMode:'fixed',iv:1.2,repeats:1},
+           {kind:'keys',value:'F5',ivMode:'fixed',iv:0,repeats:1}];
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function parseKeys(v){return v.split(',').map(x=>x.trim()).filter(Boolean)}
+// Validation mirrors keyforge.py validate_sequence exactly (same rules, same limits).
+function buildSequence(){
+  const errs=[];
+  const name=document.getElementById('seqName').value.trim();
+  const win=document.getElementById('seqWindow').value;
+  const cdRaw=document.getElementById('seqCountdown').value;
+  const countdown=cdRaw==='' ? 3 : Number(cdRaw);
+  if(!Number.isInteger(countdown)||countdown<0) errs.push('countdown must be an integer >= 0');
+  const out={name:name||'my-sequence',steps:[]};
+  if(win) out.window=win;
+  out.countdown=countdown;
+  steps.forEach((st,i)=>{
+    let step={};
+    if(st.kind==='keys'){const k=parseKeys(st.value); if(!k.length) errs.push('step '+(i+1)+': keys must be a non-empty list'); else step.keys=k;}
+    else if(st.kind==='hotkey'){const k=parseKeys(st.value); if(!k.length) errs.push('step '+(i+1)+': hotkey must be a non-empty list'); else step.hotkey=k;}
+    else {if(!st.value) errs.push('step '+(i+1)+': text steps need non-empty text'); else {step.type='text';step.text=st.value;}}
+    if(st.ivMode==='range'){
+      if(!(st.ivMin>=0&&st.ivMax>=st.ivMin)) errs.push('step '+(i+1)+': interval range must satisfy 0 <= min <= max');
+      else step.interval=[st.ivMin,st.ivMax];
+    } else {
+      if(!(st.iv>=0)) errs.push('step '+(i+1)+': interval must be >= 0');
+      else step.interval=st.iv;
+    }
+    if(!Number.isInteger(st.repeats)||st.repeats<1||st.repeats>10000) errs.push('step '+(i+1)+': repeats must be an integer in 1..10000');
+    else step.repeats=st.repeats;
+    out.steps.push(step);
+  });
+  if(!out.steps.length) errs.push('sequence needs at least one step');
+  return {seq:out,errs};
+}
+function estimate(seq){
+  let actions=0,lo=0,exp=0,hi=0;
+  seq.steps.forEach(s=>{
+    const r=s.repeats||1; actions+=r;
+    const iv=s.interval===undefined?0.2:s.interval;
+    const a=Array.isArray(iv)?iv[0]:iv, b=Array.isArray(iv)?iv[1]:iv;
+    lo+=r*a; exp+=r*(a+b)/2; hi+=r*b;
+  });
+  return {actions,lo,exp,hi};
+}
+function renderSteps(){
+  const el=document.getElementById('steps'); el.innerHTML='';
+  steps.forEach((st,i)=>{
+    const d=document.createElement('div'); d.className='stepbox';
+    d.innerHTML='<div class="srow">'
+      +'<div><label>Step '+(i+1)+' — '+(st.kind==='text'?'type text':st.kind)+'</label><input data-f="value" value="'+esc(st.value)+'" placeholder="'+(st.kind==='text'?'text to type':'comma-separated keys, e.g. ctrl, s')+'" style="width:100%"></div>'
+      +'<div class="narrow"><label>Interval mode</label><select data-f="ivMode"><option value="fixed"'+(st.ivMode==='fixed'?' selected':'')+'>fixed</option><option value="range"'+(st.ivMode==='range'?' selected':'')+'>range</option></select></div>'
+      +'<div class="narrow"><label>'+(st.ivMode==='range'?'Min (s)':'Seconds')+'</label><input data-f="iv" type="number" min="0" step="0.05" value="'+(st.ivMode==='range'?st.ivMin:st.iv)+'" style="width:100%"></div>'
+      +(st.ivMode==='range'?'<div class="narrow"><label>Max (s)</label><input data-f="ivMax" type="number" min="0" step="0.05" value="'+st.ivMax+'" style="width:100%"></div>':'')
+      +'<div class="narrow"><label>Repeats</label><input data-f="repeats" type="number" min="1" max="10000" value="'+st.repeats+'" style="width:100%"></div>'
+      +'<div class="narrow"><button class="danger" style="width:100%" onclick="removeStep('+i+')">Remove</button></div></div>';
+    d.querySelectorAll('[data-f]').forEach(inp=>{
+      inp.addEventListener('input',()=>{
+        const f=inp.dataset.f;
+        if(f==='value') st.value=inp.value;
+        else if(f==='ivMode'){st.ivMode=inp.value; if(st.ivMode==='range'&&st.ivMax===undefined){st.ivMax=st.iv; st.ivMin=st.iv;} renderSteps(); refresh();}
+        else if(f==='iv'){ if(st.ivMode==='range') st.ivMin=Number(inp.value); else st.iv=Number(inp.value); }
+        else if(f==='ivMax') st.ivMax=Number(inp.value);
+        else if(f==='repeats') st.repeats=Number(inp.value);
+        refresh();
+      });
+    });
+    el.appendChild(d);
+  });
+  refresh();
+}
+function refresh(){
+  const {seq,errs}=buildSequence();
+  document.getElementById('builderErr').textContent=errs.join(' · ');
+  document.getElementById('btnRun').disabled=!!errs.length;
+  if(errs.length){document.getElementById('stats').innerHTML='';document.getElementById('jsonPreview').textContent='';return;}
+  const e=estimate(seq);
+  document.getElementById('stats').innerHTML='Total actions: <b>'+e.actions+'</b> · Estimated duration: <b>'+e.lo.toFixed(2)+'s min / '+e.exp.toFixed(2)+'s expected / '+e.hi.toFixed(2)+'s max</b> (excluding countdown)';
+  document.getElementById('jsonPreview').textContent=JSON.stringify(seq,null,2);
+  try{localStorage.setItem(LS_KEY+'-draft',JSON.stringify({name:seq.name,window:seq.window||'',countdown:seq.countdown,steps:steps}));}catch(err){}
+}
+function addStep(kind){steps.push({kind:kind,value:kind==='text'?'Hello from KeyForge. ':kind==='hotkey'?'ctrl, s':'a',ivMode:'fixed',iv:0.2,repeats:1});renderSteps();}
+function removeStep(i){steps.splice(i,1);renderSteps();}
+function loadExample(){
+  document.getElementById('seqName').value='notepad typing demo';
+  document.getElementById('seqWindow').value='Untitled - Notepad';
+  document.getElementById('seqCountdown').value=2;
+  steps=[{kind:'text',value:'Hello from KeyForge. ',ivMode:'fixed',iv:0.5,repeats:1},
+         {kind:'keys',value:'enter',ivMode:'fixed',iv:0.3,repeats:1},
+         {kind:'keys',value:'h, e, l, l, o',ivMode:'range',ivMin:0.05,ivMax:0.15,repeats:3},
+         {kind:'hotkey',value:'ctrl, s',ivMode:'range',ivMin:1.0,ivMax:1.5,repeats:1}];
+  renderSteps();
+}
+function loadSaved(){
+  try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch(err){return {};}
+}
+function saveSequence(){
+  const {seq,errs}=buildSequence(); if(errs.length){alert('Fix validation errors first: '+errs.join('; '));return;}
+  const all=loadSaved(); all[seq.name]=seq; localStorage.setItem(LS_KEY,JSON.stringify(all)); renderSaved();
+}
+function renderSaved(){
+  const all=loadSaved(); const names=Object.keys(all);
+  document.getElementById('savedList').innerHTML=names.length?('Saved in this browser: '+names.map(n=>'<button class="ghost" style="min-height:32px;padding:6px 12px" onclick="loadNamed('+JSON.stringify(n)+')">Load '+esc(n)+'</button> <button class="danger" style="min-height:32px;padding:6px 10px" onclick="deleteNamed('+JSON.stringify(n)+')">✕</button>').join(' ')):'No saved sequences yet — press "Save in this browser".';
+}
+function loadNamed(n){
+  const s=loadSaved()[n]; if(!s) return;
+  document.getElementById('seqName').value=s.name||n;
+  document.getElementById('seqWindow').value=s.window||'';
+  document.getElementById('seqCountdown').value=s.countdown===undefined?3:s.countdown;
+  steps=s.steps.map(st=>{
+    if(st.keys) return {kind:'keys',value:st.keys.join(', '),ivMode:Array.isArray(st.interval)?'range':'fixed',iv:Array.isArray(st.interval)?st.interval[0]:st.interval,ivMin:Array.isArray(st.interval)?st.interval[0]:undefined,ivMax:Array.isArray(st.interval)?st.interval[1]:undefined,repeats:st.repeats||1};
+    if(st.hotkey) return {kind:'hotkey',value:st.hotkey.join(', '),ivMode:Array.isArray(st.interval)?'range':'fixed',iv:Array.isArray(st.interval)?st.interval[0]:st.interval,ivMin:Array.isArray(st.interval)?st.interval[0]:undefined,ivMax:Array.isArray(st.interval)?st.interval[1]:undefined,repeats:st.repeats||1};
+    return {kind:'text',value:st.text||'',ivMode:Array.isArray(st.interval)?'range':'fixed',iv:Array.isArray(st.interval)?st.interval[0]:st.interval,ivMin:Array.isArray(st.interval)?st.interval[0]:undefined,ivMax:Array.isArray(st.interval)?st.interval[1]:undefined,repeats:st.repeats||1};
+  });
+  renderSteps();
+}
+function deleteNamed(n){const all=loadSaved(); delete all[n]; localStorage.setItem(LS_KEY,JSON.stringify(all)); renderSaved();}
+function exportJSON(){
+  const {seq,errs}=buildSequence(); if(errs.length){alert('Fix validation errors first: '+errs.join('; '));return;}
+  const blob=new Blob([JSON.stringify(seq,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(seq.name||'sequence').replace(/[^\w-]+/g,'-')+'.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{try{const s=JSON.parse(r.result); const all=loadSaved(); all[s.name||'imported']=s; localStorage.setItem(LS_KEY,JSON.stringify(all)); loadNamed(s.name||'imported'); renderSaved();}catch(err){alert('Could not import: '+err.message);}};
+  r.readAsText(f); ev.target.value='';
+}
+// --- Simulator: real state machine, true sampled timing ---
+let sim=null;
+function fmt(t){return '['+t.toFixed(2)+'s]'}
+function simLog(html){const el=document.getElementById('simlog'); el.innerHTML+='<div>'+html+'</div>'; el.scrollTop=el.scrollHeight;}
+function runSim(){
+  const {seq,errs}=buildSequence(); if(errs.length){alert('Fix validation errors first: '+errs.join('; '));return;}
+  stopSimQuiet();
+  const log=document.getElementById('simlog'); log.innerHTML='';
+  // Expand the run into timed events with true sampled intervals (same math as pick_interval).
+  const events=[]; let t=0;
+  seq.steps.forEach((s,si)=>{
+    const r=s.repeats||1;
+    for(let k=0;k<r;k++){
+      const iv=s.interval===undefined?0.2:s.interval;
+      const sampled=Array.isArray(iv)?iv[0]+Math.random()*(iv[1]-iv[0]):iv;
+      const label=s.keys?('PRESS <b>'+esc(s.keys.join('+'))+'</b>'):(s.hotkey?('HOTKEY <b>'+esc(s.hotkey.join('+'))+'</b>'):('TYPE <b>'+esc(s.text)+'</b>'));
+      events.push({at:t,label:label,step:si+1,sampled:sampled,iv:iv});
+      t+=sampled;
+    }
+  });
+  sim={events:events,idx:0,t:0,timer:null,paused:false,startedAt:0,remaining:0,speed:1,seq:seq};
+  simLog('<b>SIMULATION START</b> — 0 real key events will be sent. Target window: '+(seq.window?esc(seq.window)+' (live run would abort if not found)':'none — keys would go to the active window'));
+  if(seq.countdown) simLog(fmt(0)+' COUNTDOWN '+seq.countdown+'s (live run only; skipped in simulation)');
+  document.getElementById('btnRun').disabled=true;
+  document.getElementById('btnPause').disabled=false; document.getElementById('btnStop').disabled=false;
+  document.getElementById('btnPause').textContent='Pause';
+  scheduleNext();
+}
+function scheduleNext(){
+  if(!sim) return;
+  if(sim.idx>=sim.events.length){
+    simLog(fmt(sim.t)+' <b>DRY-RUN COMPLETE</b> — '+sim.events.length+' simulated actions, 0 real key events sent');
+    endSim(); return;
+  }
+  const ev=sim.events[sim.idx];
+  const waitMs=Math.max(0,(ev.at-sim.t))*1000/Number(document.getElementById('speed').value);
+  sim.remaining=waitMs; sim.startedAt=Date.now();
+  sim.timer=setTimeout(()=>{
+    if(!sim) return;
+    sim.t=ev.at;
+    const ivTxt=Array.isArray(ev.iv)?('interval sampled '+ev.sampled.toFixed(3)+'s from ['+ev.iv[0]+', '+ev.iv[1]+']'):('interval '+ev.sampled.toFixed(3)+'s');
+    simLog(fmt(ev.at)+' Step '+ev.step+': '+ev.label+' <span style="color:var(--mut)">('+ivTxt+')</span>');
+    sim.idx++; scheduleNext();
+  },waitMs);
+}
+function pauseSim(){
+  if(!sim) return;
+  if(!sim.paused){
+    clearTimeout(sim.timer);
+    sim.remaining=Math.max(0,sim.remaining-(Date.now()-sim.startedAt));
+    sim.paused=true; document.getElementById('btnPause').textContent='Resume';
+    simLog('<span class="err">PAUSED</span> — simulation held (mirrors F9 in the desktop tool)');
+  } else {
+    sim.paused=false; document.getElementById('btnPause').textContent='Pause';
+    simLog('RESUMED');
+    sim.startedAt=Date.now();
+    sim.timer=setTimeout(()=>{
+      if(!sim) return;
+      const ev=sim.events[sim.idx]; if(!ev){endSim();return;}
+      sim.t=ev.at;
+      const ivTxt=Array.isArray(ev.iv)?('interval sampled '+ev.sampled.toFixed(3)+'s from ['+ev.iv[0]+', '+ev.iv[1]+']'):('interval '+ev.sampled.toFixed(3)+'s');
+      simLog(fmt(ev.at)+' Step '+ev.step+': '+ev.label+' <span style="color:var(--mut)">('+ivTxt+')</span>');
+      sim.idx++; scheduleNext();
+    },sim.remaining);
+  }
+}
+function stopSim(){ if(!sim) return; clearTimeout(sim.timer); simLog('<span class="err">STOPPED by kill-switch</span> — simulation aborted after '+sim.idx+' of '+sim.events.length+' actions (mirrors Esc in the desktop tool)'); endSim(); }
+function stopSimQuiet(){ if(sim){clearTimeout(sim.timer); sim=null;} }
+function endSim(){ sim=null; document.getElementById('btnRun').disabled=false; document.getElementById('btnPause').disabled=true; document.getElementById('btnStop').disabled=true; document.getElementById('btnPause').textContent='Pause'; refresh(); }
+['seqName','seqWindow','seqCountdown'].forEach(id=>document.getElementById(id).addEventListener('input',refresh));
+try{
+  const draft=JSON.parse(localStorage.getItem(LS_KEY+'-draft')||'null');
+  if(draft&&draft.steps&&draft.steps.length){document.getElementById('seqName').value=draft.name||'my-sequence';document.getElementById('seqWindow').value=draft.window||'';document.getElementById('seqCountdown').value=draft.countdown===undefined?3:draft.countdown;steps=draft.steps;}
+}catch(err){}
+renderSteps(); renderSaved();
 const io=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add('on')),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
